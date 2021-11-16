@@ -14,7 +14,9 @@ RUN wget https://github.com/samtools/htslib/releases/download/1.13/htslib-1.13.t
   cd .. && \
   rm -rf htslib-1.13 htslib-1.13.tar.bz2
 RUN git clone --branch=develop git://github.com/samtools/bcftools.git && \
-  wget -P bcftools/plugins https://raw.githubusercontent.com/freeseek/gtc2vcf/master/{gtc2vcf.{c,h},affy2vcf.c} && \
+  wget -P bcftools/plugins https://raw.githubusercontent.com/freeseek/gtc2vcf/master/gtc2vcf.c && \
+  wget -P bcftools/plugins https://raw.githubusercontent.com/freeseek/gtc2vcf/master/gtc2vcf.h && \
+  wget -P bcftools/plugins https://raw.githubusercontent.com/freeseek/gtc2vcf/master/affy2vcf.c && \
   cd bcftools && \
   make && \
   make install && \

@@ -1,8 +1,9 @@
-FROM alpine:3.14
-RUN mkdir setup
-RUN apk add --no-cache g++ gcc make cmake bzip2-dev zlib-dev ncurses-dev \
-  xz-dev autoconf automake curl-dev openssl-dev git wget
-RUN cd setup
+FROM debian:buster-slim
+RUN apt-get update && \
+  apt-get upgrade -y && \
+  apt-get install -y make wget unzip git g++ zlib1g-dev bwa samtools msitools cabextract \
+  mono-devel libgdiplus libicu67 libbz2-dev libssl-dev liblzma-dev libcurl4-openssl-dev \
+  autoconf libdeflate-dev 
 RUN wget https://github.com/samtools/htslib/releases/download/1.13/htslib-1.13.tar.bz2 && \
   tar -xf htslib-1.13.tar.bz2 && \
   cd htslib-1.13/ && \
@@ -10,13 +11,12 @@ RUN wget https://github.com/samtools/htslib/releases/download/1.13/htslib-1.13.t
   ./configure && \
   make && \
   make install && \
-  cd ..
-RUN git clone https://github.com/statgen/ruth.git && \
-  cd ruth && mkdir build && cd build && \
-  cmake .. && \
-  make && \
   cd .. && \
-  cp bin/ruth /usr/local/bin/ && \
-  cd ..
-RUN cd .. && rm -rf setup
-ENTRYPOINT ["ruth"]
+  rm -rf htslib-1.13 htslib-1.13.tar.bz2
+RUN git clone --branch=develop git://github.com/samtools/bcftools.git && \
+  wget -P bcftools/plugins https://raw.githubusercontent.com/freeseek/gtc2vcf/master/{gtc2vcf.{c,h},affy2vcf.c} && \
+  cd bcftools && \
+  make && \
+  make install && \
+  cd .. && rm -rf bcftools
+ENTRYPOINT ["bcftools"]
